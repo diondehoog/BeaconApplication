@@ -98,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Function to start the ble scan
     private void startScanning(){
+        if(bles == null){
+            bles =  mBluetoothAdapter.getBluetoothLeScanner();
+        }
         bles.startScan(mScanCallback);
     }
 
