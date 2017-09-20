@@ -20,31 +20,19 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
-    private BluetoothAdapter mBluetoothAdapter;
-    private final int REQUEST_ENABLE_BT = 1;
     private ToggleButton scanToggle;
-    private BluetoothLeScanner bles;
     private final ArrayList<String> urls=new ArrayList<String>();
+    private BlueToothController btController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        btController = new BlueToothController(this);
+        btController.requestBT();
 
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBluetoothAdapter == null){
-            Log.i("error", "Bluetooth not supported");
-        }
-        bles =  mBluetoothAdapter.getBluetoothLeScanner();
-
-        requestBT();
         initiateScanButton();
         readMacAddress();
-
-
-
-
-
 
         /*ScanSettings settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -85,40 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).start();
-
-    }
-
-    // Request the user to turn on Bluetooth
-    private void requestBT(){
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-    }
-
-    // Function to start the ble scan
-    private void startScanning(){
-        if(bles == null){
-            bles =  mBluetoothAdapter.getBluetoothLeScanner();
-        }
-        bles.startScan(mScanCallback);
-    }
-
-    // Function to stop the ble scan
-    private void stopScanning(){
-        bles.stopScan(mScanCallback);
-    }
-
-    // Callback when an activity is finished (asking for bluetooth permission)
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case REQUEST_ENABLE_BT:
-                if(resultCode == RESULT_OK) {
-                    Log.i("Bluetooh", "Enabled");
-                } else {
-                    Log.i("Bluetooh", "Denied");
-                }
-        }
     }
 
     // Set the scan listener to the button
@@ -126,26 +80,19 @@ public class MainActivity extends AppCompatActivity {
         scanToggle = (ToggleButton) findViewById(R.id.ScanButton);
         scanToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                if(isChecked && mBluetoothAdapter.isEnabled()){
-                    startScanning();
-                } else if (isChecked && !mBluetoothAdapter.isEnabled()) {
+                if(isChecked && btController.getBTAdapter().isEnabled()){
+                    btController.startScanning();
+                } else if (isChecked && !btController.getBTAdapter().isEnabled()) {
                     scanToggle.setChecked(false);
-                    requestBT();
+                    btController.requestBT();
                 } else {
-                    stopScanning();
+                    btController. stopScanning();
                 }
             }
         });
     }
 
-    // When the scan finds a ble signal
-    private ScanCallback mScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result){
-            Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.getDevice().getAddress());
-        }
-    };
+
 
 
 }
