@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by DoDoH on 20-Sep-17.
@@ -16,9 +21,16 @@ public class BlueToothController {
     private BluetoothLeScanner bles;
     private final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter mBluetoothAdapter;
-    Activity activity;
+    private Activity activity;
+    private ScanSettings settings;
+    private List<ScanFilter> filters = null;
 
     BlueToothController(Activity activity){
+        this.settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                //.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build();
+
         this.activity=activity;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
@@ -44,7 +56,7 @@ public class BlueToothController {
         if(bles == null){
             bles =  mBluetoothAdapter.getBluetoothLeScanner();
         }
-        bles.startScan(mScanCallback);
+        bles.startScan(filters, settings, mScanCallback);
     }
 
     // Function to stop the ble scan
@@ -73,5 +85,13 @@ public class BlueToothController {
                     Log.i("Bluetooh", "Denied");
                 }
         }
+    }
+
+    public void addFilter(String adress){
+        if(filters == null){
+            filters = new ArrayList<ScanFilter>();
+        }
+        ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(adress).build();
+        filters.add(sf);
     }
 }

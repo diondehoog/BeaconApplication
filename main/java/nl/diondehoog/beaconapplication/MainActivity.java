@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton scanToggle;
-    private final ArrayList<String> urls=new ArrayList<String>();
     private BlueToothController btController;
 
     @Override
@@ -34,9 +33,7 @@ public class MainActivity extends AppCompatActivity {
         initiateScanButton();
         readMacAddress();
 
-        /*ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();*/
+
 
 
     }
@@ -54,10 +51,13 @@ public class MainActivity extends AppCompatActivity {
                     BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
                     String str;
+
                     while ((str = in.readLine()) != null) {
-                        urls.add(str);
+                        btController.addFilter(str);
+                        Log.i("address:", str);
                     }
                     in.close();
+
                 } catch (Exception e) {
                     Log.i("Exception found:", e.toString());
                 }
@@ -66,8 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
                 MainActivity.this.runOnUiThread(new Runnable(){
                     public void run(){
-                        if(urls.size() > 0)
-                        Log.i("address:", urls.get(0)); // My TextFile has 3 lines
+
                     }
                 });
 
