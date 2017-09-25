@@ -21,17 +21,17 @@ public class BlueToothController {
     private BluetoothLeScanner bles;
     private final int REQUEST_ENABLE_BT = 1;
     private BluetoothAdapter mBluetoothAdapter;
-    private Activity activity;
+    private MainActivity mActivity;
     private ScanSettings settings;
     private List<ScanFilter> filters = null;
 
-    BlueToothController(Activity activity){
+    BlueToothController(MainActivity activity){
         this.settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 //.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
 
-        this.activity=activity;
+        mActivity =activity;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
             Log.i("error", "Bluetooth not supported");
@@ -47,7 +47,7 @@ public class BlueToothController {
     public void requestBT(){
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            mActivity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
     }
 
@@ -75,15 +75,17 @@ public class BlueToothController {
         }
     };
 
-    // Callback when an activity is finished (asking for bluetooth permission)
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
-            case REQUEST_ENABLE_BT:
-                if(resultCode == activity.RESULT_OK) {
-                    Log.i("Bluetooh", "Enabled");
-                } else {
-                    Log.i("Bluetooh", "Denied");
-                }
+
+    public void setFilters(List<String> fltrs){
+        if(filters == null){
+            filters = new ArrayList<ScanFilter>();
+        }
+        ScanFilter sf;
+        if(fltrs.size() > 0) {
+            for (String str : fltrs) {
+                sf = new ScanFilter.Builder().setDeviceAddress(str).build();
+                filters.add(sf);
+            }
         }
     }
 
@@ -94,4 +96,12 @@ public class BlueToothController {
         ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(adress).build();
         filters.add(sf);
     }
+
+    public void printFilters(){
+        for(ScanFilter sf : filters){
+            Log.i("adress:", sf.getDeviceAddress());
+        }
+    }
+
+
 }

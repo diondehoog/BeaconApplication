@@ -1,27 +1,27 @@
 package nl.diondehoog.beaconapplication;
 
-import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
-import android.app.Activity;
-import java.util.ArrayList;
+import org.json.JSONObject;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton scanToggle;
     private BlueToothController btController;
+    private InternetController intController;
+    private Map<String, String> bleMessages = new HashMap<String, String>();
+    private List<String> filters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,50 +29,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btController = new BlueToothController(this);
         btController.requestBT();
+        intController = new InternetController(this);
 
         initiateScanButton();
-        readMacAddress();
 
-
-
-
+        filters = intController.readMacAddress();
+        btController.setFilters(filters);
+        btController.printFilters();
     }
 
-    // read the MAC addresses from a text file on a website
-    private void readMacAddress(){
-        // new thread, so the internet stuff runs in the background
-        new Thread(new Runnable(){
-            public void run(){
-                try {
-                    URL url = new URL("https://diondehoog.github.io/test.txt");
-                    HttpURLConnection conn=(HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(60000);
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String str;
-
-                    while ((str = in.readLine()) != null) {
-                        btController.addFilter(str);
-                        Log.i("address:", str);
-                    }
-                    in.close();
-
-                } catch (Exception e) {
-                    Log.i("Exception found:", e.toString());
-                }
-
-                //since we are in background thread, to post results we have to go back to ui thread. do the following for that
-
-                MainActivity.this.runOnUiThread(new Runnable(){
-                    public void run(){
-
-                    }
-                });
-
-            }
-        }).start();
+    public void updateMessage(String sender, String msg){
+        bleMessages.put(sender, msg);
     }
+
+
 
     // Set the scan listener to the button
     private void initiateScanButton(){
