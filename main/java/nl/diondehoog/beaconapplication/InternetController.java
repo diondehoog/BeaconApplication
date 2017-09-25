@@ -1,7 +1,10 @@
 package nl.diondehoog.beaconapplication;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,7 +27,7 @@ public class InternetController {
 
 
     // read the MAC addresses from a text file on a website
-    public List<String> readMacAddress(){
+    public void readMacAddress(){
         final List<String> result = new ArrayList<String>();
         // new thread, so the internet stuff runs in the background
         new Thread(new Runnable(){
@@ -39,8 +42,7 @@ public class InternetController {
                     String str;
 
                     while ((str = in.readLine()) != null) {
-                        result.add(str);
-                        Log.i("address:", str);
+                        mActivity.getBtController().addFilter(str);
                     }
                     in.close();
 
@@ -49,7 +51,5 @@ public class InternetController {
                 }
             }
         }).start();
-
-        return result;
     }
 }

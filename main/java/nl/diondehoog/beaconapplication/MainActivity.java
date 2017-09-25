@@ -1,16 +1,10 @@
 package nl.diondehoog.beaconapplication;
 
-import android.os.AsyncTask;
+import android.bluetooth.BluetoothAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
-import org.json.JSONObject;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
     private BlueToothController btController;
     private InternetController intController;
     private Map<String, String> bleMessages = new HashMap<String, String>();
-    private List<String> filters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,18 +24,20 @@ public class MainActivity extends AppCompatActivity {
         btController.requestBT();
         intController = new InternetController(this);
 
-        initiateScanButton();
+        intController.readMacAddress();
 
-        filters = intController.readMacAddress();
-        btController.setFilters(filters);
-        btController.printFilters();
+        initiateScanButton();
     }
 
     public void updateMessage(String sender, String msg){
         bleMessages.put(sender, msg);
+        System.out.println(sender);
+        System.out.println(bleMessages.get(sender));
     }
 
-
+    public BlueToothController getBtController(){
+        return btController;
+    }
 
     // Set the scan listener to the button
     private void initiateScanButton(){
@@ -55,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                     scanToggle.setChecked(false);
                     btController.requestBT();
                 } else {
-                    btController. stopScanning();
+                    btController.stopScanning();
                 }
             }
         });

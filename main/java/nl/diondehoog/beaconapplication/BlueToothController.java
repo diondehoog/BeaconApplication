@@ -70,8 +70,7 @@ public class BlueToothController {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result){
-            Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.getDevice().getAddress());
+            mActivity.updateMessage(result.getDevice().getAddress(), "test");
         }
     };
 
@@ -87,19 +86,22 @@ public class BlueToothController {
                 filters.add(sf);
             }
         }
+        System.out.println("Filters set, printing filters");
+        printFilters();
     }
 
-    public void addFilter(String adress){
+    public void addFilter(String filter){
         if(filters == null){
             filters = new ArrayList<ScanFilter>();
         }
-        ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(adress).build();
+        ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(filter).build();
         filters.add(sf);
     }
 
     public void printFilters(){
+        System.out.println(filters.size());
         for(ScanFilter sf : filters){
-            Log.i("adress:", sf.getDeviceAddress());
+            System.out.println(sf.getDeviceAddress());
         }
     }
 
