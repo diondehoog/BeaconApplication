@@ -31,12 +31,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateMessage(String sender, String msg){
         bleMessages.put(sender, msg);
-        System.out.println(sender);
-        System.out.println(bleMessages.get(sender));
     }
 
     public BlueToothController getBtController(){
         return btController;
+    }
+
+    public Map<String, String> getBleMessages(){
+        return bleMessages;
     }
 
     // Set the scan listener to the button
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
                     btController.requestBT();
                 } else {
                     btController.stopScanning();
+                    intController.sendPost();
                 }
             }
         });

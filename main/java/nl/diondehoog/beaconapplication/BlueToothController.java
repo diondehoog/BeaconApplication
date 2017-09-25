@@ -86,7 +86,6 @@ public class BlueToothController {
                 filters.add(sf);
             }
         }
-        System.out.println("Filters set, printing filters");
         printFilters();
     }
 
