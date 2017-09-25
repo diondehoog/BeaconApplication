@@ -55,6 +55,7 @@ public class InternetController {
                         mActivity.getBtController().addFilter(str);
                     }
                     in.close();
+                    conn.disconnect();
 
                 } catch (Exception e) {
                     Log.i("Exception found:", e.toString());
@@ -85,7 +86,7 @@ public class InternetController {
         protected String doInBackground(String... arg0) {
 
             try{
-                URL url = new URL("diondehoog.github.io");
+                URL url = new URL("https://studytutorial.in/post.php");
 
                 JSONObject postDataParams = new JSONObject();
                 Map<String, String> messages = mActivity.getBleMessages();
@@ -112,9 +113,7 @@ public class InternetController {
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
 
-                    BufferedReader in=new BufferedReader(
-                            new InputStreamReader(
-                                    conn.getInputStream()));
+                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     StringBuffer sb = new StringBuffer("");
                     String line="";
 
@@ -125,11 +124,16 @@ public class InternetController {
                     }
 
                     in.close();
+                    conn.disconnect();
                     return sb.toString();
 
                 } else {
+                    conn.disconnect();
                     return new String("false : "+responseCode);
                 }
+
+
+
             }
             catch(Exception e){
                 return new String("Exception: " + e.getMessage());
