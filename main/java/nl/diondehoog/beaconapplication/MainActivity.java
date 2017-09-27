@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateMessage(String sender, String msg){
-        System.out.print("Adding message: " + msg);
+        System.out.println("Adding message: " + msg);
         bleMessages.put(sender, msg);
     }
 
@@ -60,8 +60,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 }

@@ -83,7 +83,7 @@ public class BlueToothController {
             filters = new ArrayList<ScanFilter>();
         }
         ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(filter).build();
-        //filters.add(sf);
+        filters.add(sf);
         System.out.println("Filter added: " + filter);
     }
 }
