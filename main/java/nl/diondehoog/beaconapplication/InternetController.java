@@ -16,10 +16,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -81,24 +82,33 @@ public class InternetController {
         // the stuff to do in the background
         protected String doInBackground(String... arg0) {
 
+            HttpURLConnection conn = null;
+            String response = "";
+            JSONObject postDataParams = new JSONObject();
+
             try{
                 URL url = new URL("http://bassaidaidojo.nl/test.php");
 
-                JSONObject postDataParams = new JSONObject();
-                Map<String, String> messages = mActivity.getBleMessages();
-                for(String key: messages.keySet()){
-                    postDataParams.put(key, messages.get(key));
-                }
+                HashMap<String,String> messages = mActivity.getBleMessages();
 
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
+                conn.connect();
+
+                //for(String k : messages.keySet()){
+                //    System.out.println("Found key: " + k + " with value: " + messages.get(k));
+                //    postDataParams.put(k,messages.get(k));
+                //}
+
+                postDataParams.put("name","bertus");
 
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                System.out.println("Sending message: " + getPostDataString(postDataParams));
                 writer.write(getPostDataString(postDataParams));
 
                 writer.flush();
@@ -109,7 +119,9 @@ public class InternetController {
 
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
 
-                    BufferedReader in=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    BufferedReader in=new BufferedReader(
+                            new InputStreamReader(
+                                    conn.getInputStream()));
                     StringBuffer sb = new StringBuffer("");
                     String line="";
 
@@ -120,19 +132,19 @@ public class InternetController {
                     }
 
                     in.close();
-                    conn.disconnect();
                     return sb.toString();
 
                 } else {
-                    conn.disconnect();
                     return new String("false : "+responseCode);
                 }
-
-
-
             }
             catch(Exception e){
                 return new String("Exception: " + e.getMessage());
+            }
+            finally{
+                if(conn != null){
+                    conn.disconnect();
+                }
             }
 
         }
