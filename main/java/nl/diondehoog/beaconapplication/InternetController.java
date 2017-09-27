@@ -86,13 +86,14 @@ public class InternetController {
         protected String doInBackground(String... arg0) {
 
             try{
-                URL url = new URL("https://studytutorial.in/post.php");
+                URL url = new URL("http://www.bassaidaidojo.nl/test.php");
 
                 JSONObject postDataParams = new JSONObject();
                 Map<String, String> messages = mActivity.getBleMessages();
                 for(String key: messages.keySet()){
                     postDataParams.put(key, messages.get(key));
                 }
+                postDataParams.put("name", "Bertus");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000);
@@ -118,7 +119,7 @@ public class InternetController {
                     String line="";
 
                     while((line = in.readLine()) != null) {
-
+                        System.out.println(line);
                         sb.append(line);
                         break;
                     }
