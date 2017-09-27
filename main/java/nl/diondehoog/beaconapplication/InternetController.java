@@ -43,17 +43,20 @@ public class InternetController {
         new Thread(new Runnable(){
             public void run(){
                 try {
+                    // connect to website
                     URL url = new URL("https://diondehoog.github.io/test.txt");
                     HttpURLConnection conn=(HttpURLConnection) url.openConnection();
                     conn.setConnectTimeout(60000);
 
+                    // read textfile
                     BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
                     String str;
-
                     while ((str = in.readLine()) != null) {
+                        System.out.println("Adress found: " + str);
                         mActivity.getBtController().addFilter(str);
                     }
+
+                    // close reader and connection
                     in.close();
                     conn.disconnect();
 
@@ -64,36 +67,28 @@ public class InternetController {
         }).start();
     }
 
-
+    // execute the postrequest
     public void sendPost(){
         new SendPostRequest().execute();
     }
 
 
-
-    /* PHP should be of form
-    * <?php
-    * $key = $_POST['key'];
-    * $key = $_POST['key'];
-    * print_r(json_encode($_POST));
-    * ?>*/
-
+    // sendPostrequest class (asynctask)
     public class SendPostRequest extends AsyncTask<String, Void, String> {
-
 
         protected void onPreExecute(){}
 
+        // the stuff to do in the background
         protected String doInBackground(String... arg0) {
 
             try{
-                URL url = new URL("http://www.bassaidaidojo.nl/test.php");
+                URL url = new URL("http://bassaidaidojo.nl/test.php");
 
                 JSONObject postDataParams = new JSONObject();
                 Map<String, String> messages = mActivity.getBleMessages();
                 for(String key: messages.keySet()){
                     postDataParams.put(key, messages.get(key));
                 }
-                postDataParams.put("name", "Bertus");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(15000);
@@ -119,7 +114,7 @@ public class InternetController {
                     String line="";
 
                     while((line = in.readLine()) != null) {
-                        System.out.println(line);
+
                         sb.append(line);
                         break;
                     }

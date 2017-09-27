@@ -53,6 +53,7 @@ public class BlueToothController {
 
     // Function to start the ble scan
     public void startScanning(){
+        System.out.println("Started scanning");
         if(bles == null){
             bles =  mBluetoothAdapter.getBluetoothLeScanner();
         }
@@ -61,6 +62,7 @@ public class BlueToothController {
 
     // Function to stop the ble scan
     public void stopScanning(){
+        System.out.println("Stopped scanning");
         if(bles != null) {
             bles.stopScan(mScanCallback);
         }
@@ -70,39 +72,18 @@ public class BlueToothController {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result){
+            System.out.println("ble Found: " + result.getDevice().getAddress());
             mActivity.updateMessage(result.getDevice().getAddress(), "test");
         }
     };
 
-
-    public void setFilters(List<String> fltrs){
-        if(filters == null){
-            filters = new ArrayList<ScanFilter>();
-        }
-        ScanFilter sf;
-        if(fltrs.size() > 0) {
-            for (String str : fltrs) {
-                sf = new ScanFilter.Builder().setDeviceAddress(str).build();
-                filters.add(sf);
-            }
-        }
-        printFilters();
-    }
-
+    // add a filter
     public void addFilter(String filter){
         if(filters == null){
             filters = new ArrayList<ScanFilter>();
         }
         ScanFilter sf = new ScanFilter.Builder().setDeviceAddress(filter).build();
-        filters.add(sf);
+        //filters.add(sf);
+        System.out.println("Filter added: " + filter);
     }
-
-    public void printFilters(){
-        System.out.println(filters.size());
-        for(ScanFilter sf : filters){
-            System.out.println(sf.getDeviceAddress());
-        }
-    }
-
-
 }

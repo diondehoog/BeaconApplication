@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private ToggleButton scanToggle;
     private BlueToothController btController;
     private InternetController intController;
-    private Map<String, String> bleMessages = new HashMap<String, String>();
+    private HashMap<String, String> bleMessages = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateMessage(String sender, String msg){
+        System.out.print("Adding message: " + msg);
         bleMessages.put(sender, msg);
     }
 
@@ -37,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         return btController;
     }
 
-    public Map<String, String> getBleMessages(){
+    public HashMap<String, String> getBleMessages(){
+        System.out.println("Returning Messages" + bleMessages);
         return bleMessages;
     }
 
