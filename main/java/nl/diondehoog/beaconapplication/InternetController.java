@@ -3,6 +3,7 @@ package nl.diondehoog.beaconapplication;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -82,84 +84,56 @@ public class InternetController {
         // the stuff to do in the background
         protected String doInBackground(String... arg0) {
 
-            HttpURLConnection conn = null;
-            String response = "";
-            JSONObject postDataParams = new JSONObject();
+            try {
 
-            try{
+                URL url = new URL("http://www.bassaidaidojo.nl/test.php"); // here is your URL path
 
-                // get the ble messages and make a string out of it
-                HashMap<String, String> messages = mActivity.getBleMessages();
-                //for(String k : messages.keySet()){
-                //    System.out.println("Found key: " + k + " with value: " + messages.get(k));
-                //    postDataParams.put(k,messages.get(k));
-                //}
-
+                JSONObject postDataParams = new JSONObject();
                 postDataParams.put("name", "abc");
                 postDataParams.put("email", "abc@gmail.com");
-                String msg = getPostDataString((postDataParams));
+                Log.e("params",postDataParams.toString());
 
-
-                // open the connection
-                URL url = new URL("http://bassaidaidojo.nl/test.php");
-                conn = (HttpURLConnection) url.openConnection();
-
-
-                // set the connection attributes
-                conn.setReadTimeout(15000);
-                conn.setConnectTimeout(15000);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
-                conn.connect();
 
-                // post the message
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                System.out.println("Sending message: " + msg);
-                writer.write(msg);
-
-                // close writer and outputstream
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                writer.write(getPostDataString(postDataParams));
                 writer.flush();
                 writer.close();
-                os.close();
 
-                // get the response of the server
                 int responseCode=conn.getResponseCode();
+
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
+                    InputStream input = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                    StringBuilder result = new StringBuilder();
+                    String line;
 
-                    BufferedReader in=new BufferedReader(
-                            new InputStreamReader(
-                                    conn.getInputStream()));
-                    StringBuffer sb = new StringBuffer("");
-                    String line="";
-
-                    while((line = in.readLine()) != null) {
-                        sb.append(line);
-                        break;
+                    while((line = reader.readLine()) != null){
+                        result.append(line);
                     }
 
-                    in.close();
-                    return sb.toString();
+                    return result.toString();
 
-                } else {
+                }
+                else {
                     return new String("false : "+responseCode);
                 }
             }
             catch(Exception e){
                 return new String("Exception: " + e.getMessage());
             }
-            finally{
-                if(conn != null){
-                    conn.disconnect();
-                }
-            }
-
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(mActivity, result, Toast.LENGTH_LONG).show();
+            Toast.makeText(mActivity, result,
+                    Toast.LENGTH_LONG).show();
         }
     }
 
