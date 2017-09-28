@@ -87,11 +87,25 @@ public class InternetController {
             JSONObject postDataParams = new JSONObject();
 
             try{
+
+                // get the ble messages and make a string out of it
+                HashMap<String, String> messages = mActivity.getBleMessages();
+                //for(String k : messages.keySet()){
+                //    System.out.println("Found key: " + k + " with value: " + messages.get(k));
+                //    postDataParams.put(k,messages.get(k));
+                //}
+
+                postDataParams.put("name", "abc");
+                postDataParams.put("email", "abc@gmail.com");
+                String msg = getPostDataString((postDataParams));
+
+
+                // open the connection
                 URL url = new URL("http://bassaidaidojo.nl/test.php");
-
-                HashMap<String,String> messages = mActivity.getBleMessages();
-
                 conn = (HttpURLConnection) url.openConnection();
+
+
+                // set the connection attributes
                 conn.setReadTimeout(15000);
                 conn.setConnectTimeout(15000);
                 conn.setRequestMethod("POST");
@@ -99,24 +113,19 @@ public class InternetController {
                 conn.setDoOutput(true);
                 conn.connect();
 
-                //for(String k : messages.keySet()){
-                //    System.out.println("Found key: " + k + " with value: " + messages.get(k));
-                //    postDataParams.put(k,messages.get(k));
-                //}
-
-                postDataParams.put("name","bertus");
-
+                // post the message
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                System.out.println("Sending message: " + getPostDataString(postDataParams));
-                writer.write(getPostDataString(postDataParams));
+                System.out.println("Sending message: " + msg);
+                writer.write(msg);
 
+                // close writer and outputstream
                 writer.flush();
                 writer.close();
                 os.close();
 
+                // get the response of the server
                 int responseCode=conn.getResponseCode();
-
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
 
                     BufferedReader in=new BufferedReader(
@@ -126,7 +135,6 @@ public class InternetController {
                     String line="";
 
                     while((line = in.readLine()) != null) {
-
                         sb.append(line);
                         break;
                     }
