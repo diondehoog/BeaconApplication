@@ -1,13 +1,10 @@
 package nl.diondehoog.beaconapplication;
 
-import android.bluetooth.BluetoothAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {

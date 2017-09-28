@@ -1,29 +1,14 @@
 package nl.diondehoog.beaconapplication;
 
-import android.app.Activity;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.renderscript.ScriptGroup;
-import android.util.Log;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.security.Key;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -37,14 +22,19 @@ public class InternetController {
 
     InternetController(MainActivity activity) {
         mActivity = activity;
+    }
 
+    // execute the readMacAddress
+    public void readMacAddress(){new readMacAdress().execute();}
+
+    // execute the postrequest
+    public void sendPost(){
+        new SendPostRequest().execute();
     }
 
 
     // readMacAdress class (asynctask)
     public class readMacAdress extends AsyncTask<String, Void, String> {
-
-        protected void onPreExecute(){}
 
         // the stuff to do in the background
         protected String doInBackground(String... arg0) {
@@ -59,6 +49,7 @@ public class InternetController {
                 url = new URL("https://diondehoog.github.io/test.txt");
                 conn=(HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(15000);
+                conn.connect();
 
                 // read textfile
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -71,31 +62,21 @@ public class InternetController {
                 // close reader and connection
                 in.close();
             }
-            // catch exception
+            // catch exceptions
             catch(Exception e){
-                return new String("Exception: " + e.getMessage());
+                System.out.println("Exception found: " + e.getMessage());
+                return response;
             }
             // disconnect
             finally{
                 conn.disconnect();
-                return "";
+                return response;
             }
         }
     }
 
-
-    public void readMacAddress(){new readMacAdress().execute();}
-
-    // execute the postrequest
-    public void sendPost(){
-        new SendPostRequest().execute();
-    }
-
-
     // sendPostrequest class (asynctask)
     public class SendPostRequest extends AsyncTask<String, Void, String> {
-
-        protected void onPreExecute(){}
 
         // the stuff to do in the background
         protected String doInBackground(String... arg0) {
@@ -175,7 +156,6 @@ public class InternetController {
             result.append("=");
             result.append(entry.getValue());
         }
-
         return result.toString();
     }
 }
