@@ -26,6 +26,8 @@ public class BlueToothController {
     private List<ScanFilter> filters = null;
 
     BlueToothController(MainActivity activity){
+
+        // the ble scan settings
         this.settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                 //.setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
@@ -34,11 +36,12 @@ public class BlueToothController {
         mActivity =activity;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(mBluetoothAdapter == null){
-            Log.i("error", "Bluetooth not supported");
+            System.out.println("error: Bluetooth not supported");
         }
         bles =  mBluetoothAdapter.getBluetoothLeScanner();
     }
 
+    // get the bluetooth adapter
     public BluetoothAdapter getBTAdapter(){
         return mBluetoothAdapter;
     }

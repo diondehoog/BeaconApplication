@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private InternetController intController;
     private HashMap<String, String> bleMessages = new HashMap<String, String>();
 
+    // when the activity is started
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,15 +30,18 @@ public class MainActivity extends AppCompatActivity {
         initiateScanButton();
     }
 
+    // add a found message to the messages
     public void updateMessage(String sender, String msg){
         System.out.println("Adding message: " + msg);
         bleMessages.put(sender, msg);
     }
 
+    // return the bluetoothcontroller
     public BlueToothController getBtController(){
         return btController;
     }
 
+    // return the found ble messages
     public HashMap<String, String> getBleMessages(){
         System.out.println("Returning Messages" + bleMessages);
         return bleMessages;

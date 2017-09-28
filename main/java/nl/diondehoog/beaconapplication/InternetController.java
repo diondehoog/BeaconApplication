@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -39,36 +41,50 @@ public class InternetController {
     }
 
 
-    // read the MAC addresses from a text file on a website
-    public void readMacAddress(){
-        final List<String> result = new ArrayList<String>();
-        // new thread, so the internet stuff runs in the background
-        new Thread(new Runnable(){
-            public void run(){
-                try {
-                    // connect to website
-                    URL url = new URL("https://diondehoog.github.io/test.txt");
-                    HttpURLConnection conn=(HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(60000);
+    // readMacAdress class (asynctask)
+    public class readMacAdress extends AsyncTask<String, Void, String> {
 
-                    // read textfile
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    String str;
-                    while ((str = in.readLine()) != null) {
-                        System.out.println("Adress found: " + str);
-                        mActivity.getBtController().addFilter(str);
-                    }
+        protected void onPreExecute(){}
 
-                    // close reader and connection
-                    in.close();
-                    conn.disconnect();
+        // the stuff to do in the background
+        protected String doInBackground(String... arg0) {
 
-                } catch (Exception e) {
-                    Log.i("Exception found:", e.toString());
+            // instantiate variables
+            URL url = null;
+            HttpURLConnection conn = null;
+            String response = "";
+
+            try {
+                // connect to website
+                url = new URL("https://diondehoog.github.io/test.txt");
+                conn=(HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(15000);
+
+                // read textfile
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    System.out.println("Adress found: " + str);
+                    mActivity.getBtController().addFilter(str);
                 }
+
+                // close reader and connection
+                in.close();
             }
-        }).start();
+            // catch exception
+            catch(Exception e){
+                return new String("Exception: " + e.getMessage());
+            }
+            // disconnect
+            finally{
+                conn.disconnect();
+                return "";
+            }
+        }
     }
+
+
+    public void readMacAddress(){new readMacAdress().execute();}
 
     // execute the postrequest
     public void sendPost(){
@@ -84,52 +100,60 @@ public class InternetController {
         // the stuff to do in the background
         protected String doInBackground(String... arg0) {
 
+            // instantiate variables
+            URL url = null;
+            HttpURLConnection conn = null;
+            String response = "";
+
             try {
+                // set url path
+                url = new URL("http://www.bassaidaidojo.nl/test.php"); // here is your URL path
 
-                URL url = new URL("http://www.bassaidaidojo.nl/test.php"); // here is your URL path
+                // put all the values in
+                HashMap<String, String> messages = mActivity.getBleMessages();
 
-                JSONObject postDataParams = new JSONObject();
-                postDataParams.put("name", "abc");
-                postDataParams.put("email", "abc@gmail.com");
-                Log.e("params",postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                // set connection attributes
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
 
+                // send the post and close the writer
                 OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                writer.write(getPostDataString(postDataParams));
+                writer.write(HashMapToString(messages));
+                System.out.println("Send message: " + HashMapToString(messages));
                 writer.flush();
                 writer.close();
 
+                // check the responsecode
                 int responseCode=conn.getResponseCode();
 
+                // get response or show error
                 if (responseCode == HttpsURLConnection.HTTP_OK) {
-                    InputStream input = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-                    StringBuilder result = new StringBuilder();
                     String line;
-
-                    while((line = reader.readLine()) != null){
-                        result.append(line);
+                    BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    while ((line=br.readLine()) != null) {
+                        response+=line;
                     }
-
-                    return result.toString();
-
+                    return response;
                 }
                 else {
                     return new String("false : "+responseCode);
                 }
             }
+            // catch exception
             catch(Exception e){
                 return new String("Exception: " + e.getMessage());
             }
+            // disconnect
+            finally{
+                conn.disconnect();
+            }
         }
 
+        // when the post is finished, show the result as a toast
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(mActivity, result,
@@ -137,28 +161,21 @@ public class InternetController {
         }
     }
 
-    public String getPostDataString(JSONObject params) throws Exception {
-
+    // convert hashmap to a string
+    private String HashMapToString(HashMap<String, String> params) {
         StringBuilder result = new StringBuilder();
         boolean first = true;
-
-        Iterator<String> itr = params.keys();
-
-        while(itr.hasNext()){
-
-            String key= itr.next();
-            Object value = params.get(key);
-
+        for(Map.Entry<String, String> entry : params.entrySet()){
             if (first)
                 first = false;
             else
                 result.append("&");
 
-            result.append(URLEncoder.encode(key, "UTF-8"));
+            result.append(entry.getKey());
             result.append("=");
-            result.append(URLEncoder.encode(value.toString(), "UTF-8"));
-
+            result.append(entry.getValue());
         }
+
         return result.toString();
     }
 }
