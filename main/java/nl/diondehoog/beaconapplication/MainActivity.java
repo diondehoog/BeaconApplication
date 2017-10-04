@@ -1,7 +1,15 @@
 package nl.diondehoog.beaconapplication;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import java.util.HashMap;
@@ -12,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private BlueToothController btController;
     private InternetController intController;
     private HashMap<String, String> bleMessages = new HashMap<String, String>();
+    private final int PERMISSION_REQUEST_COARSE_LOCATION = 2;
 
     // when the activity is started
     @Override
@@ -21,9 +30,12 @@ public class MainActivity extends AppCompatActivity {
         btController = new BlueToothController(this);
         btController.requestBT();
         intController = new InternetController(this);
-
         intController.readMacAddress();
+        Log.i("MainActivity:","Starting application");
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            requestLocationPermission();
+        }
         initiateScanButton();
     }
 
@@ -62,5 +74,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @TargetApi(23)
+    private void requestLocationPermission(){
+        // Android M Permission check 
+        if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("This app needs location access");
+            builder.setMessage("Please grand location access so this app can detect beacons");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener(){
+                public void onDismiss(DialogInterface dialog){
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                }
+            });
+            builder.show();
+        }
     }
 }

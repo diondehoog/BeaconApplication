@@ -23,6 +23,8 @@ public class InternetController {
     MainActivity mActivity;
     private int sendPostDelay = 60000; //milliseconds
     private int readMACDelay = 300000; // milliseconds
+    Timer PostTimer;
+    Timer MACTimer;
 
     InternetController(MainActivity activity) {
         mActivity = activity;
@@ -88,23 +90,38 @@ public class InternetController {
         startMACTimer();
     }
 
-    public void startPostTimer(){
-        Timer PostTimer = new Timer();
+    public void stopTimers(){
+        stopPostTimer();
+        stopMACTimer();
+    }
+
+    private void stopPostTimer(){
+        PostTimer.cancel();
+        PostTimer = null;
+    }
+
+    private void stopMACTimer(){
+        MACTimer.cancel();
+        MACTimer = null;
+    }
+
+    private void startPostTimer(){
+        PostTimer = new Timer();
         PostTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                new SendPostRequest().execute();
+                sendPost();
 
             }
         }, 0, sendPostDelay);
     }
 
-    public void startMACTimer(){
-        Timer PostTimer = new Timer();
-        PostTimer.schedule(new TimerTask() {
+    private void startMACTimer(){
+        MACTimer = new Timer();
+        MACTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                new readMacAdress().execute();
+                readMacAddress();
 
             }
         }, 0, readMACDelay);

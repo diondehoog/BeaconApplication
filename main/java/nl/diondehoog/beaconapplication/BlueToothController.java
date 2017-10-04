@@ -1,5 +1,6 @@
 package nl.diondehoog.beaconapplication;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -7,6 +8,8 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.List;
 public class BlueToothController {
     private BluetoothLeScanner bles;
     private final int REQUEST_ENABLE_BT = 1;
+    private final int MY_PERMISSIONS_REQUEST_LOCATION = 2;
     private BluetoothAdapter mBluetoothAdapter;
     private MainActivity mActivity;
     private ScanSettings settings;
@@ -68,6 +72,7 @@ public class BlueToothController {
         if(bles != null) {
             bles.stopScan(mScanCallback);
         }
+        mActivity.getIntController().stopTimers();privateprivateprivate
     }
 
     // When the scan finds a ble signal
