@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         return btController;
     }
 
+    public InternetController getIntController() { return intController; }
+
     // return the found ble messages
     public HashMap<String, String> getBleMessages(){
         System.out.println("Returning Messages" + bleMessages);

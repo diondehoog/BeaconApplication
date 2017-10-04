@@ -59,6 +59,7 @@ public class BlueToothController {
             bles =  mBluetoothAdapter.getBluetoothLeScanner();
         }
         bles.startScan(filters, settings, mScanCallback);
+        mActivity.getIntController().startTimers();
     }
 
     // Function to stop the ble scan

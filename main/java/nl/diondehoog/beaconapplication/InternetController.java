@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -19,6 +21,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class InternetController {
     MainActivity mActivity;
+    private int sendPostDelay = 60000; //milliseconds
+    private int readMACDelay = 300000; // milliseconds
 
     InternetController(MainActivity activity) {
         mActivity = activity;
@@ -73,6 +77,37 @@ public class InternetController {
                 return response;
             }
         }
+
+        protected void onPostExecute(String result){
+            System.out.println("MAC addresses read");
+        }
+    }
+
+    public void startTimers(){
+        startPostTimer();
+        startMACTimer();
+    }
+
+    public void startPostTimer(){
+        Timer PostTimer = new Timer();
+        PostTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new SendPostRequest().execute();
+
+            }
+        }, 0, sendPostDelay);
+    }
+
+    public void startMACTimer(){
+        Timer PostTimer = new Timer();
+        PostTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new readMacAdress().execute();
+
+            }
+        }, 0, readMACDelay);
     }
 
     // sendPostrequest class (asynctask)
@@ -88,7 +123,7 @@ public class InternetController {
 
             try {
                 // set url path
-                url = new URL("http://www.bassaidaidojo.nl/test.php"); // here is your URL path
+                url = new URL("http://www.bassaidaidojo.nl/test.php");
 
                 // put all the values in
                 HashMap<String, String> messages = mActivity.getBleMessages();
