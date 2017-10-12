@@ -72,7 +72,7 @@ public class BlueToothController {
         if(bles != null) {
             bles.stopScan(mScanCallback);
         }
-        mActivity.getIntController().stopTimers();privateprivateprivate
+        mActivity.getIntController().stopTimers();
     }
 
     // When the scan finds a ble signal
