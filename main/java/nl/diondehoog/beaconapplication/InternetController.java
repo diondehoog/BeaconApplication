@@ -200,7 +200,10 @@ public class InternetController {
             }
             // disconnect
             finally{
-                conn.disconnect();
+                if(conn != null) {
+                    conn.disconnect();
+                }
+                mActivity.clearMessages();
                 return response;
             }
         }

@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         bleMessages.put(sender, msg);
     }
 
+    public void clearMessages(){
+        bleMessages = new HashMap<String, String>();
+    }
+
     // return the bluetoothcontroller
     public BlueToothController getBtController(){
         return btController;
