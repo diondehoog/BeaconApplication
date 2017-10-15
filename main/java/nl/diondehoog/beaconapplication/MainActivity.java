@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void submitMACaddress(View v){
-        System.out.println("Submitting MAC address");
         macText = (EditText) findViewById(R.id.MacText);
         String address = macText.getText().toString();
         if(address.length() == 0){
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void submitPOSTaddress(View v){
-        macText = (EditText) findViewById(R.id.PostText);
+        postText = (EditText) findViewById(R.id.PostText);
         String address = postText.getText().toString();
         if(address.length() == 0){
             Toast.makeText(this, "POST adress cannot be empty", Toast.LENGTH_SHORT).show();
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (!address.substring(address.length() - 4).equals(".php")){
             Toast.makeText(this, "address should end in .php", Toast.LENGTH_SHORT).show();
         } else {
-            intController.setMacAddress(address);
+            intController.setPostAddress(address);
             Toast.makeText(this, "POST address location is now " + address, Toast.LENGTH_SHORT).show();
         }
     }
