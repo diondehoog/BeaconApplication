@@ -1,6 +1,5 @@
 package nl.diondehoog.beaconapplication;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
@@ -8,8 +7,6 @@ import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
-import android.location.Location;
-import android.support.v4.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.List;
