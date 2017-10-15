@@ -24,7 +24,7 @@ public class InternetController {
     private int sendPostDelay = 10000; //milliseconds
     private int readMACDelay = 300000; // milliseconds
     String postAddress = "http://www.bassaidaidojo.nl/test.php";
-    String macAddress = "https://diondehoog.github.io/test.txt";
+    String macAddress = "";//"https://diondehoog.github.io/test.txt";
     Timer PostTimer;
     Timer MACTimer;
     boolean firstPOSTscan = true;
@@ -90,7 +90,9 @@ public class InternetController {
             }
             // disconnect
             finally{
-                conn.disconnect();
+                if(conn != null) {
+                    conn.disconnect();
+                }
                 return response;
             }
         }
