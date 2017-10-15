@@ -187,20 +187,19 @@ public class InternetController {
                     while ((line=br.readLine()) != null) {
                         response+=line;
                     }
-                    return response;
-                }
-                else {
-                    return new String("false : "+responseCode);
+                } else {
+                    response ="false : "+responseCode;
                 }
             }
             // catch exception
             catch(Exception e){
-                return new String("Exception: " + e.getMessage());
                 Toast.makeText(mActivity, e.getMessage(), Toast.LENGTH_LONG).show();
+                response = "Exception: " + e.getMessage();
             }
             // disconnect
             finally{
                 conn.disconnect();
+                return response;
             }
         }
 
