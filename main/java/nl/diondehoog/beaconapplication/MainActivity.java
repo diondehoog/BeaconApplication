@@ -9,13 +9,20 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
     private ToggleButton scanToggle;
+    private Button postButton;
+    private Button macButton;
+    private EditText postText;
+    private EditText macText;
     private BlueToothController btController;
     private InternetController intController;
     private HashMap<String, String> bleMessages = new HashMap<String, String>();
@@ -55,6 +62,34 @@ public class MainActivity extends AppCompatActivity {
     public HashMap<String, String> getBleMessages(){
         System.out.println("Returning Messages" + bleMessages);
         return bleMessages;
+    }
+
+    public void submitMACaddress(){
+        macText = (EditText) findViewById(R.id.MacText);
+        String address = macText.getText().toString();
+        if(address == null){
+            Toast.makeText(this, "MAC adress cannot be empty", Toast.LENGTH_SHORT).show();
+        } else if (address.substring(0,7) != "http://" || address.substring(0,8) != "https://"){
+            Toast.makeText(this, "address should begin with http:// or https://", Toast.LENGTH_SHORT).show();
+        } else if (address.substring(address.length() - 4) != ".txt"){
+            Toast.makeText(this, "address should end in .txt", Toast.LENGTH_SHORT).show();
+        } else {
+            intController.setMacAddress(address);
+        }
+    }
+
+    public void submitPOSTaddress(){
+        macText = (EditText) findViewById(R.id.MacText);
+        String address = macText.getText().toString();
+        if(address == null){
+            Toast.makeText(this, "POST adress cannot be empty", Toast.LENGTH_SHORT).show();
+        } else if (address.substring(0,7) != "http://" || address.substring(0,8) != "https://"){
+            Toast.makeText(this, "address should begin with http:// or https://", Toast.LENGTH_SHORT).show();
+        } else if (address.substring(address.length() - 4) != ".php"){
+            Toast.makeText(this, "address should end in .php", Toast.LENGTH_SHORT).show();
+        } else {
+            intController.setPostAddress(address);
+        }
     }
 
     // Set the scan listener to the button

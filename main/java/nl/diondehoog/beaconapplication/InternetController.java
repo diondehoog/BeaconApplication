@@ -23,6 +23,8 @@ public class InternetController {
     MainActivity mActivity;
     private int sendPostDelay = 10000; //milliseconds
     private int readMACDelay = 300000; // milliseconds
+    String postAddress = "http://www.bassaidaidojo.nl/test.php";
+    String macAddress = "https://diondehoog.github.io/test.txt";
     Timer PostTimer;
     Timer MACTimer;
     boolean firstPOSTscan = true;
@@ -43,6 +45,14 @@ public class InternetController {
         }
     }
 
+    public void setPostAddress(String address){
+        postAddress = address;
+    }
+
+    public void setMacAddress(String address){
+        macAddress = address;
+    }
+
 
     // readMacAdress class (asynctask)
     public class readMacAdress extends AsyncTask<String, Void, String> {
@@ -57,7 +67,7 @@ public class InternetController {
 
             try {
                 // connect to website
-                url = new URL("https://diondehoog.github.io/test.txt");
+                url = new URL(macAddress);
                 conn=(HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(15000);
                 conn.connect();
@@ -76,7 +86,7 @@ public class InternetController {
             // catch exceptions
             catch(Exception e){
                 System.out.println("Exception found: " + e.getMessage());
-                return response;
+                Toast.makeText(mActivity, e.getMessage(), Toast.LENGTH_LONG).show();
             }
             // disconnect
             finally{
@@ -147,7 +157,7 @@ public class InternetController {
             try {
 
                 // set url path
-                url = new URL("http://www.bassaidaidojo.nl/test.php");
+                url = new URL(postAddress);
 
                 // put all the values in
                 HashMap<String, String> messages = mActivity.getBleMessages();
@@ -186,6 +196,7 @@ public class InternetController {
             // catch exception
             catch(Exception e){
                 return new String("Exception: " + e.getMessage());
+                Toast.makeText(mActivity, e.getMessage(), Toast.LENGTH_LONG).show();
             }
             // disconnect
             finally{
@@ -197,7 +208,7 @@ public class InternetController {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(mActivity, result,
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
