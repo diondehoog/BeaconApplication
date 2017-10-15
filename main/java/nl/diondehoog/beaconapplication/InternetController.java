@@ -21,10 +21,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class InternetController {
     MainActivity mActivity;
-    private int sendPostDelay = 60000; //milliseconds
+    private int sendPostDelay = 10000; //milliseconds
     private int readMACDelay = 300000; // milliseconds
     Timer PostTimer;
     Timer MACTimer;
+    boolean firstPOSTscan = true;
 
     InternetController(MainActivity activity) {
         mActivity = activity;
@@ -35,7 +36,11 @@ public class InternetController {
 
     // execute the postrequest
     public void sendPost(){
-        new SendPostRequest().execute();
+        if(firstPOSTscan){
+            firstPOSTscan = false;
+        } else {
+            new SendPostRequest().execute();
+        }
     }
 
 
@@ -86,6 +91,7 @@ public class InternetController {
     }
 
     public void startTimers(){
+        firstPOSTscan = true;
         startPostTimer();
         startMACTimer();
     }
@@ -108,12 +114,12 @@ public class InternetController {
     private void startPostTimer(){
         PostTimer = new Timer();
         PostTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                sendPost();
+                @Override
+                public void run() {
+                    sendPost();
 
-            }
-        }, 0, sendPostDelay);
+                }
+            }, 0, sendPostDelay);
     }
 
     private void startMACTimer(){
@@ -139,6 +145,7 @@ public class InternetController {
             String response = "";
 
             try {
+
                 // set url path
                 url = new URL("http://www.bassaidaidojo.nl/test.php");
 

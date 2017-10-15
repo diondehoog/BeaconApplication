@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                     btController.requestBT();
                 } else {
                     btController.stopScanning();
-                    intController.sendPost();
                 }
             }
         });
