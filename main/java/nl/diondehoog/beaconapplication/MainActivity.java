@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         btController = new BlueToothController(this);
         btController.requestBT();
         intController = new InternetController(this);
-        intController.readMacAddress();
         Log.i("MainActivity:","Starting application");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -64,31 +64,34 @@ public class MainActivity extends AppCompatActivity {
         return bleMessages;
     }
 
-    public void submitMACaddress(){
+    public void submitMACaddress(View v){
+        System.out.println("Submitting MAC address");
         macText = (EditText) findViewById(R.id.MacText);
         String address = macText.getText().toString();
-        if(address == null){
+        if(address.length() == 0){
             Toast.makeText(this, "MAC adress cannot be empty", Toast.LENGTH_SHORT).show();
-        } else if (address.substring(0,7) != "http://" || address.substring(0,8) != "https://"){
+        } else if (address.length() < 7 || !(address.substring(0,7).equals("http://") || address.substring(0,8).equals("https://"))){
             Toast.makeText(this, "address should begin with http:// or https://", Toast.LENGTH_SHORT).show();
-        } else if (address.substring(address.length() - 4) != ".txt"){
+        } else if (!address.substring(address.length() - 4).equals(".txt")){
             Toast.makeText(this, "address should end in .txt", Toast.LENGTH_SHORT).show();
         } else {
             intController.setMacAddress(address);
+            Toast.makeText(this, "MAC address location is now " + address, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void submitPOSTaddress(){
-        macText = (EditText) findViewById(R.id.MacText);
-        String address = macText.getText().toString();
-        if(address == null){
+    public void submitPOSTaddress(View v){
+        macText = (EditText) findViewById(R.id.PostText);
+        String address = postText.getText().toString();
+        if(address.length() == 0){
             Toast.makeText(this, "POST adress cannot be empty", Toast.LENGTH_SHORT).show();
-        } else if (address.substring(0,7) != "http://" || address.substring(0,8) != "https://"){
+        } else if (address.length() < 7 || !(address.substring(0,7).equals("http://") || address.substring(0,8).equals("https://"))){
             Toast.makeText(this, "address should begin with http:// or https://", Toast.LENGTH_SHORT).show();
-        } else if (address.substring(address.length() - 4) != ".php"){
+        } else if (!address.substring(address.length() - 4).equals(".php")){
             Toast.makeText(this, "address should end in .php", Toast.LENGTH_SHORT).show();
         } else {
-            intController.setPostAddress(address);
+            intController.setMacAddress(address);
+            Toast.makeText(this, "POST address location is now " + address, Toast.LENGTH_SHORT).show();
         }
     }
 
