@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             requestLocationPermission();
         }
+        intController.readMacAddress();
         initiateScanButton();
     }
 
