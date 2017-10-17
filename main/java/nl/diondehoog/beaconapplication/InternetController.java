@@ -23,7 +23,7 @@ public class InternetController {
     MainActivity mActivity;
     private int sendPostDelay = 10000; //milliseconds
     private int readMACDelay = 300000; // milliseconds
-    String postAddress = "http://www.bassaidaidojo.nl/test.php";
+    String postAddress = "http://rolfhut.nl/BluetoothDemo/receiveRawData.php";
     String macAddress = "https://diondehoog.github.io/test.txt";
     Timer PostTimer;
     Timer MACTimer;
