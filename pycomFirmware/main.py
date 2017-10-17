@@ -16,7 +16,7 @@ bluetooth.callback(trigger=Bluetooth.CLIENT_CONNECTED | Bluetooth.CLIENT_DISCONN
 counter = 0
 
 while True:
-    bluetooth.set_advertisement(name='LoPyRolf', service_uuid='1234567890123456', service_data=str(counter))
+    bluetooth.set_advertisement(name='testRolf', service_uuid='1234567890123456', service_data='abcdefghijklmnopqrstuvwxyz01234567890')
     bluetooth.advertise(True)
     time.sleep(5)
     bluetooth.advertise(False)
