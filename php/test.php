@@ -5,6 +5,6 @@
 	//echo $date;
 	$result ="[" . $date . "] " . $str1 . "\n";
 		
-	file_put_contents("test.txt", $result, FILE_APPEND);
+	file_put_contents("rawData.txt", $result, FILE_APPEND);
 	echo $result;
 ?>
