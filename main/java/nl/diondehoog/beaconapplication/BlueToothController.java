@@ -77,7 +77,7 @@ public class BlueToothController {
         @Override
         public void onScanResult(int callbackType, ScanResult result){
             System.out.println("ble Found: " + result.getDevice().getAddress());
-            mActivity.updateMessage(result.getDevice().getAddress(), result.getScanRecord().toString());
+            mActivity.updateMessage(result.getDevice().getAddress(), result.getScanRecord().getDeviceName());
         }
     };
 
